@@ -1,0 +1,31 @@
+// colocar minhas tabelas
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Restaurant {
+  id String @id @default(uuid())
+  name String
+  slug String
+  description String
+  avatarImageUrl String
+  coverImageUrl String
+  menuCategories MenuCategory[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MenuCategory {
+  id String @id @default(uuid())
+  name String
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
