@@ -12,10 +12,20 @@ interface CreateOrderInput {
     quantity: number;
   }>;
   consumptionMethod: ConsumptionMethod;
-  restaurantId: string;
+  slug: string;
 }
 
 export const createOrder = async (input: CreateOrderInput) => {
+  const restaurant = await db.restaurant.findUnique({
+    where: {
+      slug: input.slug,
+    },
+  });
+
+  if (!restaurant) {
+    throw new Error("Restaurante não encontrado");
+  }
+
   const productsWithPrice = await db.product.findMany({
     where: {
       id: {
@@ -34,7 +44,7 @@ export const createOrder = async (input: CreateOrderInput) => {
     data: {
       status: "PENDING",
       consumptionMethod: input.consumptionMethod,
-      restaurantId: input.restaurantId,
+      restaurantId: restaurant.id,
       customerName: input.customerName,
       customerCpf: removeCpfPunctuation(input.customerCpf),
       orderProducts: {
