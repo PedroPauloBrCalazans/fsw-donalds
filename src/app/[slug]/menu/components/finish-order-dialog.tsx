@@ -53,6 +53,9 @@ const formSchema = z.object({
 
 type FormSchema = z.infer<typeof formSchema>;
 
+//SERVER ACTIONS - No final vai ser uma rota de API - ser executada no servidor e ser chamada aqui
+// - Funções que são executadas no servidor, mas podem ser chamadas de client component
+
 interface FinishOrderDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
