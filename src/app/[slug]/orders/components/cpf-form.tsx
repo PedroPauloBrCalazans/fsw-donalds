@@ -1,7 +1,7 @@
 "use client";
 
 import { z } from "zod";
-import { isValidCpf } from "../../menu/helpers/cpf";
+import { isValidCpf, removeCpfPunctuation } from "../../menu/helpers/cpf";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/form";
 import { PatternFormat } from "react-number-format";
 import { Input } from "@/components/ui/input";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const formSchema = z.object({
   cpf: z
@@ -46,58 +46,62 @@ const CpfForm = () => {
   });
 
   const router = useRouter();
+  const pathName = usePathname(); //pegando a rota atual
 
   const handleCancel = () => {
-    router.back();
+    router.back(); //usuario volta para pagina anterior
   };
 
-  const onSubmit = (data: FormSchema) => {};
+  const onSubmit = (data: FormSchema) => {
+    router.push(`${pathName}?cpf=${removeCpfPunctuation(data.cpf)}`);
+  };
 
   return (
     <Drawer open>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle></DrawerTitle>
-          <DrawerDescription></DrawerDescription>
+          <DrawerTitle>Visualizar Pedidos</DrawerTitle>
+          <DrawerDescription>
+            Insira seu CPF abaixo para visualizar seus pedidos.
+          </DrawerDescription>
         </DrawerHeader>
-        <div className="p-5">
-          <Form {...form}>
-            <form>
-              <FormField
-                control={form.control}
-                name="cpf"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Seu CPF</FormLabel>
-                    <FormControl>
-                      <PatternFormat
-                        placeholder="Digite seu CPF..."
-                        format="###.###.###-##"
-                        customInput={Input}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <DrawerFooter>
-                <Button variant="destructive" className="w-full rounded-full">
-                  Confirmar
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="cpf"
+              render={({ field }) => (
+                <FormItem className="px-4">
+                  <FormLabel>Seu CPF</FormLabel>
+                  <FormControl>
+                    <PatternFormat
+                      placeholder="Digite seu CPF..."
+                      format="###.###.###-##"
+                      customInput={Input}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <DrawerFooter>
+              <Button variant="destructive" className="w-full rounded-full">
+                Confirmar
+              </Button>
+              <DrawerClose asChild>
+                <Button
+                  variant="outline"
+                  className="w-full rounded-full"
+                  onClick={handleCancel}
+                >
+                  Cancelar
                 </Button>
-                <DrawerClose asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full rounded-full"
-                    onClick={handleCancel}
-                  >
-                    Cancelar
-                  </Button>
-                </DrawerClose>
-              </DrawerFooter>
-            </form>
-          </Form>
-        </div>
+              </DrawerClose>
+            </DrawerFooter>
+          </form>
+        </Form>
       </DrawerContent>
     </Drawer>
   );
