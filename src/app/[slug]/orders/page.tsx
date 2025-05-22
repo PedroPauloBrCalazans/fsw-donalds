@@ -22,6 +22,14 @@ const OrdersPage = async ({ searchParams }: OrdersPageProps) => {
     where: {
       customerCpf: removeCpfPunctuation(cpf),
     },
+    include: {
+      restaurant: {
+        select: {
+          name: true,
+          avatarImageUrl: true,
+        },
+      },
+    },
   });
 
   return <OrderList orders={orders} />;
