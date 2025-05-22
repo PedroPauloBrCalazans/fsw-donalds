@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/form";
 import { PatternFormat } from "react-number-format";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   cpf: z
@@ -44,6 +45,12 @@ const CpfForm = () => {
     resolver: zodResolver(formSchema),
   });
 
+  const router = useRouter();
+
+  const handleCancel = () => {
+    router.back();
+  };
+
   const onSubmit = (data: FormSchema) => {};
 
   return (
@@ -53,35 +60,44 @@ const CpfForm = () => {
           <DrawerTitle></DrawerTitle>
           <DrawerDescription></DrawerDescription>
         </DrawerHeader>
-        <Form {...form}>
-          <form>
-            <FormField
-              control={form.control}
-              name="cpf"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Seu CPF</FormLabel>
-                  <FormControl>
-                    <PatternFormat
-                      placeholder="Digite seu CPF..."
-                      format="###.###.###-##"
-                      customInput={Input}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </form>
-        </Form>
-
-        <DrawerFooter>
-          <Button>Confirmar</Button>
-          <DrawerClose>
-            <Button>Cancelar</Button>
-          </DrawerClose>
-        </DrawerFooter>
+        <div className="p-5">
+          <Form {...form}>
+            <form>
+              <FormField
+                control={form.control}
+                name="cpf"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Seu CPF</FormLabel>
+                    <FormControl>
+                      <PatternFormat
+                        placeholder="Digite seu CPF..."
+                        format="###.###.###-##"
+                        customInput={Input}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DrawerFooter>
+                <Button variant="destructive" className="w-full rounded-full">
+                  Confirmar
+                </Button>
+                <DrawerClose asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full rounded-full"
+                    onClick={handleCancel}
+                  >
+                    Cancelar
+                  </Button>
+                </DrawerClose>
+              </DrawerFooter>
+            </form>
+          </Form>
+        </div>
       </DrawerContent>
     </Drawer>
   );
