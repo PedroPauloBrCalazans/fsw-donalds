@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { formatCurrency } from "@/helpers/format-currency";
 import { Prisma } from "@prisma/client";
 import { ChevronLeftIcon, ScrollTextIcon } from "lucide-react";
 import Image from "next/image";
@@ -12,6 +14,11 @@ interface OrderListProps {
           select: {
             name: true;
             avatarImageUrl: true;
+          };
+        };
+        orderProducts: {
+          include: {
+            product: true;
           };
         };
       };
@@ -41,9 +48,24 @@ const OrderList = ({ orders }: OrderListProps) => {
                   src={order.restaurant.avatarImageUrl}
                   alt={order.restaurant.name}
                   fill
+                  className="rounded-sm"
                 />
               </div>
+              <p className="text-sm font-semibold">{order.restaurant.name}</p>
             </div>
+            <Separator />
+            <div className="space-y-2">
+              {order.orderProducts.map((orderProduct) => (
+                <div key={orderProduct.id} className="flex items-center gap-2">
+                  <div className="h-5 w-5 flex items-center justify-center rounded-full bg-gray-400 text-white text-xs font-semibold">
+                    {orderProduct.quantity}
+                  </div>
+                  <p className="text-sm">{orderProduct.product.name}</p>
+                </div>
+              ))}
+            </div>
+            <Separator />
+            <p className="text-sm font-medium">{formatCurrency(order.total)}</p>
           </CardContent>
         </Card>
       ))}
