@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { formatCurrency } from "@/helpers/format-currency";
-import { Prisma } from "@prisma/client";
+import { OrderStatus, Prisma } from "@prisma/client";
 import { ChevronLeftIcon, ScrollTextIcon } from "lucide-react";
 import Image from "next/image";
 
@@ -26,6 +26,13 @@ interface OrderListProps {
   >;
 }
 
+const getStatusLabel = (status: OrderStatus) => {
+  if (status === "FINISHED") return "Finalizado";
+  if (status === "IN_PREPARATION") return "Em preparo";
+  if (status === "PENDING") return "Pendente";
+  return "";
+};
+
 const OrderList = ({ orders }: OrderListProps) => {
   return (
     <div className="space-y-6 p-6">
@@ -39,8 +46,16 @@ const OrderList = ({ orders }: OrderListProps) => {
       {orders.map((order) => (
         <Card key={order.id}>
           <CardContent className="space-y-4 p-5">
-            <div className="w-fit bg-gray-500 text-white rounded-full px-2 py-1 text-xs font-semibold">
-              Em preparo
+            <div
+              className={`w-fit text-white rounded-full px-2 py-1 text-xs font-semibold
+                ${
+                  order.status === OrderStatus.FINISHED
+                    ? "bg-green-500 text-white"
+                    : "bg-gray-200 text-gray-500"
+                }
+                `}
+            >
+              {getStatusLabel(order.status)}
             </div>
             <div className="flex items-center gap-2">
               <div className="relative h-5 w-5">
